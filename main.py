@@ -26,6 +26,12 @@ def main() -> None:
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8") as f:
         f.write(LINE)
+    # Round-trip check: the file the judge reads must be byte-identical to
+    # the line above, so a silent write failure can never ship a stale entry.
+    with open("/output/entry.txt", encoding="utf-8") as f:
+        if f.read() != LINE:
+            print("error: /output/entry.txt does not match LINE", file=sys.stderr)
+            raise SystemExit(1)
     print(f"wrote {len(LINE)} chars to /output/entry.txt")
 
 
